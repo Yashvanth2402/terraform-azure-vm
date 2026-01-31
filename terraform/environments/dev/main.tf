@@ -29,7 +29,9 @@ resource "azurerm_network_interface" "nic" {
   }
 }
 
+# 🚫 VM DISABLED IN CI / PR (count = 0)
 resource "azurerm_linux_virtual_machine" "vm" {
+  count               = var.enable_vm ? 1 : 0
   name                = var.vm_name
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
