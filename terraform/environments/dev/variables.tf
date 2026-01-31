@@ -1,35 +1,16 @@
-variable "location" {
-  description = "Azure region where resources will be deployed"
+# Good: Add more variables
+variable "data_disk_size" {
+  description = "Size of data disk in GB"
+  type        = number
+  default     = 64
+  validation {
+    condition     = var.data_disk_size >= 32 && var.data_disk_size <= 4096
+    error_message = "Data disk size must be between 32GB and 4096GB."
+  }
+}
+
+variable "allowed_ssh_cidr" {
+  description = "CIDR block allowed for SSH access"
   type        = string
-  default     = "East US"
-}
-
-variable "vm_size" {
-  description = "Size of the Linux VM"
-  type        = string
-  default     = "Standard_B2s"
-}
-
-variable "admin_username" {
-  description = "Admin username for the VM"
-  type        = string
-  default     = "azureuser"
-}
-
-variable "ssh_public_key" {
-  description = "SSH public key for VM access"
-  type        = string
-  sensitive   = true
-}
-
-variable "vnet_address_space" {
-  description = "Address space for the virtual network"
-  type        = list(string)
-  default     = ["10.1.0.0/16"]
-}
-
-variable "subnet_address_prefixes" {
-  description = "Address prefixes for the subnet"
-  type        = list(string)
-  default     = ["10.1.1.0/24"]
+  default     = "10.0.0.0/24"
 }
