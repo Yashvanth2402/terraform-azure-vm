@@ -4,6 +4,10 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~> 3.0"
     }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "~> 4.0"
+    }
   }
 }
 
@@ -11,14 +15,20 @@ provider "azurerm" {
   features {}
 }
 
+# 🔐 Generate SSH key pair automatically
+resource "tls_private_key" "vm_ssh" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
 resource "azurerm_resource_group" "rg" {
   name     = "rg-vm-dev"
-  location = "East US"
+  location = var.location
 }
 
 resource "azurerm_virtual_network" "vnet" {
   name                = "vnet-dev"
-  address_space       = ["10.1.0.0/16"]
+  address_space       = var.vnet_address_space
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 }
@@ -27,7 +37,7 @@ resource "azurerm_subnet" "subnet" {
   name                 = "vm-subnet"
   resource_group_name  = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = ["10.1.1.0/24"]
+  address_prefixes     = var.subnet_address_prefixes
 }
 
 resource "azurerm_network_interface" "nic" {
@@ -46,7 +56,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
   name                = "example-vm"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  size                = "Standard_B2s"
+  size                = var.vm_size
   admin_username      = "azureuser"
 
   network_interface_ids = [
@@ -67,6 +77,6 @@ resource "azurerm_linux_virtual_machine" "vm" {
 
   admin_ssh_key {
     username   = "azureuser"
-    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC..."
+    public_key = tls_private_key.vm_ssh.public_key_openssh
   }
 }
