@@ -2,11 +2,17 @@ name: AI Terraform Review
 
 on:
   pull_request:
+    branches: [ main ]
+    paths:
+      - 'terraform/**'
 
 jobs:
   ai-review:
     uses: Yashvanth2402/ai-terraform-reviewer-platform/.github/workflows/terraform-ai-review.yml@main
     with:
-      terraform_path: terraform/environments/dev
-      environment: dev
-    secrets: inherit
+      terraform_path: terraform/environments/dev  # Changed from terraform-dir to terraform_path
+      environment: dev  # Added environment input
+    secrets:
+      AZURE_OPENAI_KEY: ${{ secrets.AZURE_OPENAI_KEY }}
+      AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+      AZURE_OPENAI_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_DEPLOYMENT }}
