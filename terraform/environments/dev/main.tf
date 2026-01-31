@@ -13,7 +13,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "rg" {
   name     = "rg-vm-dev"
-  location = "East US"
+  location = var.location
 }
 
 resource "azurerm_virtual_network" "vnet" {
@@ -46,7 +46,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
   name                = "example-vm"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  size                = "Standard_B4ms"
+  size                = var.vm_size
   admin_username      = "azureuser"
 
   network_interface_ids = [
@@ -67,6 +67,6 @@ resource "azurerm_linux_virtual_machine" "vm" {
 
   admin_ssh_key {
     username   = "azureuser"
-    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC..."
+    public_key = var.ssh_public_key
   }
 }
