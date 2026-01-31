@@ -1,0 +1,12 @@
+name: AI Terraform Review
+
+on:
+  pull_request:
+
+jobs:
+  ai-review:
+    uses: Yashvanth2402/ai-terraform-reviewer-platform/.github/workflows/terraform-ai-review.yml@main
+    with:
+      terraform_path: terraform/environments/dev
+      environment: dev
+    secrets: inherit
