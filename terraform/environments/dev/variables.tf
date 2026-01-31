@@ -1,6 +1,6 @@
 variable "location" {
   type    = string
-  default = "East US"
+  default = "eastus"
 }
 
 variable "resource_group_name" {
@@ -25,5 +25,12 @@ variable "admin_username" {
 
 variable "ssh_public_key" {
   type        = string
-  description = "SSH public key for VM access (CI-safe, injected)"
+  description = "SSH public key (only used when VM is enabled)"
+  default     = ""
+}
+
+# 🔑 CRITICAL FLAG — disables VM in CI / PR
+variable "enable_vm" {
+  type    = bool
+  default = false
 }
