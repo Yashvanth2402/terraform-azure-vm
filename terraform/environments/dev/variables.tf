@@ -10,18 +10,6 @@ variable "vm_size" {
   default     = "Standard_B2s"
 }
 
-variable "admin_username" {
-  description = "Admin username for the VM"
-  type        = string
-  default     = "azureuser"
-}
-
-variable "ssh_public_key" {
-  description = "SSH public key for VM access"
-  type        = string
-  sensitive   = true
-}
-
 variable "vnet_address_space" {
   description = "Address space for the virtual network"
   type        = list(string)
