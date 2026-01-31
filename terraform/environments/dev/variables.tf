@@ -1,35 +1,36 @@
 variable "location" {
-  description = "Azure region where resources will be deployed"
-  type        = string
-  default     = "East US"
+  type    = string
+  default = "eastus"
 }
 
-variable "vm_size" {
-  description = "Size of the Linux VM"
-  type        = string
-  default     = "Standard_B2s"
+variable "resource_group_name" {
+  type = string
+}
+
+variable "vnet_name" {
+  type = string
+}
+
+variable "subnet_name" {
+  type = string
+}
+
+variable "vm_name" {
+  type = string
 }
 
 variable "admin_username" {
-  description = "Admin username for the VM"
-  type        = string
-  default     = "azureuser"
+  type = string
 }
 
 variable "ssh_public_key" {
-  description = "SSH public key for VM access"
   type        = string
-  sensitive   = true
+  description = "SSH public key (only used when VM is enabled)"
+  default     = ""
 }
 
-variable "vnet_address_space" {
-  description = "Address space for the virtual network"
-  type        = list(string)
-  default     = ["10.1.0.0/16"]
-}
-
-variable "subnet_address_prefixes" {
-  description = "Address prefixes for the subnet"
-  type        = list(string)
-  default     = ["10.1.1.0/24"]
+# 🔑 CRITICAL FLAG — disables VM in CI / PR
+variable "enable_vm" {
+  type    = bool
+  default = false
 }
