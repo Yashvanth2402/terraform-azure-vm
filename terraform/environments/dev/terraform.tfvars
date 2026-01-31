@@ -1,0 +1,5 @@
+resource_group_name = "rg-dev"
+vnet_name           = "vnet-dev"
+subnet_name         = "subnet-dev"
+vm_name             = "vm-dev"
+admin_username      = "azureuser"
