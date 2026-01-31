@@ -22,3 +22,8 @@ variable "vm_name" {
 variable "admin_username" {
   type = string
 }
+
+variable "ssh_public_key" {
+  type        = string
+  description = "SSH public key for VM access (CI-safe, injected)"
+}
