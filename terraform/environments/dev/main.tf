@@ -1,72 +1,34 @@
-terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = "~> 3.0"
-    }
-  }
-}
-
-provider "azurerm" {
-  features {}
-}
-
+# Good: Add tags for cost management
 resource "azurerm_resource_group" "rg" {
   name     = "rg-vm-dev"
-  location = "East US"
+  location = var.location
+  
+  tags = {
+    Environment = "dev"
+    CostCenter  = "IT"
+    ManagedBy   = "Terraform"
+  }
 }
 
-resource "azurerm_virtual_network" "vnet" {
-  name                = "vnet-dev"
-  address_space       = ["10.1.0.0/16"]
+# Good: Add managed disk
+resource "azurerm_managed_disk" "data_disk" {
+  name                 = "vm-data-disk"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-}
-
-resource "azurerm_subnet" "subnet" {
-  name                 = "vm-subnet"
-  resource_group_name  = azurerm_resource_group.rg.name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = ["10.1.1.0/24"]
-}
-
-resource "azurerm_network_interface" "nic" {
-  name                = "vm-nic"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-
-  ip_configuration {
-    name                          = "internal"
-    subnet_id                     = azurerm_subnet.subnet.id
-    private_ip_address_allocation = "Dynamic"
+  storage_account_type = "Standard_LRS"
+  create_option        = "Empty"
+  disk_size_gb         = 64
+  
+  tags = {
+    Environment = "dev"
+    Purpose     = "DataStorage"
   }
 }
 
-resource "azurerm_linux_virtual_machine" "vm" {
-  name                = "example-vm"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
-  size                = "Standard_B2s"
-  admin_username      = "azureuser"
-
-  network_interface_ids = [
-    azurerm_network_interface.nic.id
-  ]
-
-  os_disk {
-    caching              = "ReadWrite"
-    storage_account_type = "Standard_LRS"
-  }
-
-  source_image_reference {
-    publisher = "Canonical"
-    offer     = "0001-com-ubuntu-server-focal"
-    sku       = "20_04-lts"
-    version   = "latest"
-  }
-
-  admin_ssh_key {
-    username   = "azureuser"
-    public_key = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC..."
-  }
+# Attach data disk to VM
+resource "azurerm_virtual_machine_data_disk_attachment" "example" {
+  virtual_machine_id = azurerm_linux_virtual_machine.vm.id
+  managed_disk_id    = azurerm_managed_disk.data_disk.id
+  lun                = "10"
+  caching            = "ReadWrite"
 }
