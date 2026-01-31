@@ -22,3 +22,8 @@ output "vm_private_ip" {
   description = "Private IP address of the VM"
   value       = azurerm_network_interface.nic.private_ip_address
 }
+
+output "nsg_name" {
+  description = "Name of the Network Security Group"
+  value       = azurerm_network_security_group.vm_nsg.name
+}
