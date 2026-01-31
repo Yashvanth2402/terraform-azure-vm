@@ -1,12 +1,25 @@
-name: AI Terraform Review
+name: AI Terraform Review Bot
 
 on:
   pull_request:
+    branches: [ main ]
+    paths:
+      - "terraform/**"
 
 jobs:
   ai-review:
+    permissions:
+      contents: read
+      pull-requests: write
+
     uses: Yashvanth2402/ai-terraform-reviewer-platform/.github/workflows/terraform-ai-review.yml@main
+
     with:
       terraform_path: terraform/environments/dev
       environment: dev
-    secrets: inherit
+
+    secrets:
+      AZURE_OPENAI_KEY: ${{ secrets.AZURE_OPENAI_KEY }}
+      AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+      AZURE_OPENAI_DEPLOYMENT: ${{ secrets.AZURE_OPENAI_DEPLOYMENT }}
+      AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}   # ✅ REQUIRED
